@@ -1,0 +1,19 @@
+api_platform:
+    title: 'SymfReact API'
+    description: 'Mon API Symfony pour gérer mon application ReactJs.'
+    version: '1.0.0'
+    mapping:
+        paths: ['%kernel.project_dir%/src/Entity']
+    patch_formats:
+        json: ['application/merge-patch+json']
+    swagger:
+        versions: [3]
+#    eager_loading:
+#        force_eager: true
+    collection:
+        pagination:
+            enabled: false
+#            items_per_page: 30
+            client_enabled: true
+            client_items_per_page: true
+            items_per_page_parameter_name: 'count'
