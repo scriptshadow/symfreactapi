@@ -1,5 +1,6 @@
 import React from 'react';
-function HomePage(props) {
+
+const HomePage = (props) => {
     return (
         <>
             <div className="p-5 mb-4 bg-light rounded-3">
