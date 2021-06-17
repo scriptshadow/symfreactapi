@@ -3,6 +3,7 @@ import AuthAPI from "../services/AuthAPI";
 import AuthContext from "../contexts/AuthContext";
 import Field from "../components/forms/Field";
 import {Link} from "react-router-dom";
+import {toast} from "react-toastify";
 
 const LoginPage = ({history}) =>{
     const [credentials, setCredentials] = useState({username: '', password: ''})
@@ -23,9 +24,11 @@ const LoginPage = ({history}) =>{
             await AuthAPI.authenticate(credentials)
             setError("")
             setIsAuthenticated(true)
+            toast.success("Vous êtes desormais connecté !")
             history.replace("/customers")
         } catch (error) {
             setError("Les informations ne correspondent pas.")
+            toast.error("Une erreur est survenue!")
         }
     }
 

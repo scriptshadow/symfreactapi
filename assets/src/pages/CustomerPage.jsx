@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import Field from "../components/forms/Field";
 import {Link} from "react-router-dom";
 import CustomersAPI from "../services/CustomersAPI";
+import {toast} from "react-toastify";
+import FormContentLoader from "../components/loaders/FormContentLoader";
 
 const initialState = {
     lastName: '',
@@ -17,6 +19,7 @@ const CustomerPage = ({match, history}) => {
     const {lastName, firstName, email, company} = customer
     const [error, setError] = useState(initialState)
     const [editing, setEditing] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     /**
      * Récupération des informations d'un client en fonction de l'id
@@ -27,7 +30,9 @@ const CustomerPage = ({match, history}) => {
         try {
             const {lastName, firstName, email, company} = await CustomersAPI.find(id)
             setCustomer({lastName, firstName, email, company} )
+            setLoading(false)
         } catch (e) {
+            toast.error("Une erreur est survenue lors du chargement des informations du client!")
             history.replace("/customers")
         }
     }
@@ -38,6 +43,7 @@ const CustomerPage = ({match, history}) => {
     useEffect(() => {
         if(id !== 'new') {
             setEditing(true)
+            setLoading(true)
             fetchCustomer(id)
         }
     }, [id])
@@ -59,13 +65,15 @@ const CustomerPage = ({match, history}) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
+            setError(initialState)
             if(editing){
                 await CustomersAPI.update(id, customer)
+                toast.success("Le compte du clients a bien été modifié!")
             }else {
                 await CustomersAPI.create(customer)
+                toast.success("Le compte du clients a bien été creé!")
                 history.replace("/customers")
             }
-            setError(initialState)
         } catch ({response}) {
             const {violations} = response.data
             if(violations){
@@ -75,6 +83,7 @@ const CustomerPage = ({match, history}) => {
                 })
                 setError(apiErrors)
             }
+            toast.error("Des erreurs dans votre formulaire!")
         }
     }
 
@@ -82,7 +91,8 @@ const CustomerPage = ({match, history}) => {
         <>
             <div className="container">
                 <div className="row">
-                    <div className="col-md-6 mx-auto">
+                    {loading && (<FormContentLoader/>)}
+                    {!loading && (<div className="col-md-6 mx-auto">
                         <h1>{editing ? "Modification du client" : "Création d'un client"}</h1>
                         <form onSubmit={handleSubmit}>
                             <Field name="lastName" label="Nom de famille" value={lastName} onChange={handleInputChange}  error={error.lastName}/>
@@ -96,7 +106,7 @@ const CustomerPage = ({match, history}) => {
                                 </Link>
                             </div>
                         </form>
-                    </div>
+                    </div>)}
                 </div>
             </div>
         </>

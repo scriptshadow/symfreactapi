@@ -4,6 +4,8 @@ import {Link} from "react-router-dom";
 import CustomersAPI from "../services/CustomersAPI";
 import Select from "../components/forms/Select";
 import InvoicesAPI from "../services/InvoicesAPI";
+import {toast} from "react-toastify";
+import FormContentLoader from "../components/loaders/FormContentLoader";
 
 const initialState = {
     amount: '',
@@ -21,6 +23,7 @@ const InvoicePage = ({match, history}) => {
 
     const [errors, setErrors] = useState(initialState)
     const [editing, setEditing] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     /**
      * Récupération des informations d'une facture en fonction de l'id
@@ -31,7 +34,9 @@ const InvoicePage = ({match, history}) => {
         try {
             const {amount, customer, status} = await InvoicesAPI.find(id)
             setInvoice({amount, customer: customer.id, status} )
+            setLoading(false)
         } catch (e) {
+            toast.error("Une erreur est survenue lors du chargement de la facture demandée!")
             history.replace("/invoices")
         }
     }
@@ -45,7 +50,9 @@ const InvoicePage = ({match, history}) => {
             const data =  await CustomersAPI.findAll()
             setCustomers(data)
             if(!invoice.customer && id === 'new') setInvoice({...invoice, customer: data[0].id})
+            setLoading(false)
         } catch (e) {
+            toast.error("Une erreur est survenue lors du chargement des clients!")
             history.replace("/invoices")
         }
     }
@@ -82,13 +89,15 @@ const InvoicePage = ({match, history}) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
+            setErrors(initialState)
             if(editing){
                 await InvoicesAPI.update(id, invoice)
+                toast.success("La facture a bien été modifiée!")
             }else {
                 await InvoicesAPI.create(invoice)
+                toast.success("La facture a bien été creée!")
                 history.replace("/invoices")
             }
-            setErrors(initialState)
         } catch ({response}) {
             const {violations} = response.data
             if(violations){
@@ -98,13 +107,15 @@ const InvoicePage = ({match, history}) => {
                 })
                 setErrors(apiErrors)
             }
+            toast.error("Des erreurs dans votre formulaire!")
         }
     }
     return (
         <>
             <div className="container">
                 <div className="row">
-                    <div className="col-md-8 mx-auto">
+                    {loading && (<FormContentLoader/>)}
+                    {!loading && (<div className="col-md-8 mx-auto">
                         <h1>{editing ? "Modification" : "Création"} d'une facture</h1>
                         <form onSubmit={handleSubmit}>
                             <Field type="number" name="amount" label="Montant" placeholder="Montant de la facture" value={amount} onChange={handleInputChange} error={errors.amount}/>
@@ -123,7 +134,7 @@ const InvoicePage = ({match, history}) => {
                                 </Link>
                             </div>
                         </form>
-                    </div>
+                    </div>)}
                 </div>
             </div>
         </>

@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import AuthContext from "../contexts/AuthContext";
 import Field from "../components/forms/Field";
 import UsersAPI from "../services/UsersAPI";
+import {toast} from "react-toastify";
 
 const initialState = {
     lastName: '',
@@ -31,12 +32,14 @@ const RegisterPage = ({history}) =>{
         if(password !== passwordConfirm){
             apiErrors.passwordConfirm = "Les 2 mot de passes ne correspondent pas."
             setErrors(apiErrors)
+            toast.error("Des erreurs dans votre formulaire!")
             return
         }
         try {
             const response = await UsersAPI.create(user)
             console.log(response)
             setErrors({})
+            toast.success("Vous êtes desormais inscrit, vous pouvez maintenant vous connecté !")
             history.replace("/login")
         } catch ({response}) {
             const {violations} = response.data
@@ -46,6 +49,7 @@ const RegisterPage = ({history}) =>{
                 })
                 setErrors(apiErrors)
             }
+            toast.error("Des erreurs dans votre formulaire!")
         }
     }
 
