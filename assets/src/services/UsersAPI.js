@@ -1,13 +1,9 @@
 import axios from "axios";
 import jwt from "jwt-decode";
+import {USERS_API} from "../config";
 
-/**
- *
- * @param user
- * @returns {Promise<AxiosResponse<any>>}
- */
 function create(user) {
-    return axios.post("http://127.0.0.1:8000/api/users", user)
+    return axios.post(USERS_API, user)
         .then((res) => res.data)
 }
 export default {

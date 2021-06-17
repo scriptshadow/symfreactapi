@@ -1,10 +1,6 @@
 import axios from "axios";
 import jwt from "jwt-decode";
-
-function create(user) {
-    return axios.post("http://127.0.0.1:8000/api/users", user)
-        .then((res) => res.data)
-}
+import {LOGIN_API} from "../config";
 
 /**
  * Deconnexion (suppression du token du localStorage et sur Axios)
@@ -21,7 +17,7 @@ function logout() {
  */
 async function authenticate(credentials) {
     return axios
-        .post("http://127.0.0.1:8000/api/login_check", credentials)
+        .post(LOGIN_API, credentials)
         .then((res) => res.data.token)
         .then((token) => {
             // On stocke le token dans notre localStorage
@@ -69,7 +65,6 @@ function isAuthenticated() {
 }
 
 export default {
-    create,
     authenticate,
     logout,
     setup,
