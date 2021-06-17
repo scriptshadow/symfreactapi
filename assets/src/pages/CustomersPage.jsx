@@ -1,17 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import CustomersAPI from "../services/CustomersAPI";
 import Pagination from "../components/Pagination";
+import {Link} from "react-router-dom";
 
 const CustomersPage = (props) => {
     const [customers, setCustomers] = useState([])
     const [currentPage, setCurrentPage] = useState(1)
     const [search, setSearch] = useState("")
+    const [loading, setLoading] = useState(true)
 
     //Recuperation de la liste des clients
     const fetchCustomers = async () => {
         try {
             const data = await CustomersAPI.findAll()
             setCustomers(data)
+            setLoading(false)
         } catch (e) {
             console.log(e.response)
         }
@@ -61,7 +64,12 @@ const CustomersPage = (props) => {
 
     return (
         <>
-            <h1>Liste des clients</h1>
+            <div className="mb-3 d-flex justify-content-between align-items-center">
+                <h1>Liste des clients</h1>
+                <Link to="/customers/new" className="btn btn-primary btn-sm">
+                    Créer un client
+                </Link>
+            </div>
             <div className="form-group">
                 <input type="text" onChange={handleSearchChange} value={search} className="form-control" placeholder="Rechercher..."/>
             </div>
@@ -78,7 +86,8 @@ const CustomersPage = (props) => {
                 </tr>
                 </thead>
                 <tbody>
-                {
+                { loading && (<tr><td>Chargement en cours...</td></tr>) }
+                {!loading &&
                     paginatedCustomers.map((c) => (
                         <tr key={c.id}>
                             <td>{c.id}</td>
@@ -94,6 +103,9 @@ const CustomersPage = (props) => {
                                 {c.totalAmount.toLocaleString()} FCFA
                             </td>
                             <td>
+                                <Link to={"/customers/"+c.id} className="btn btn-sm btn-primary mr-1">
+                                    Editer
+                                </Link>&nbsp;
                                 <button
                                     onClick={() => handleDelete(c.id)}
                                     disabled={c.invoices.length > 0}

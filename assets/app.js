@@ -1,8 +1,7 @@
 import React, {useState} from 'react'
 import ReactDOM from 'react-dom'
-import "bootswatch/dist/materia/bootstrap.min.css"
+import "bootswatch/dist/litera/bootstrap.min.css"
 import {HashRouter, Route, Switch, withRouter} from "react-router-dom";
-
 
 import './styles/app.css';
 import './bootstrap';
@@ -15,6 +14,9 @@ import LoginPage from "./src/pages/LoginPage";
 import AuthAPI from "./src/services/AuthAPI";
 import AuthContext from "./src/contexts/AuthContext";
 import PrivateRoute from "./src/components/PrivateRoute";
+import CustomerPage from "./src/pages/CustomerPage";
+import InvoicePage from "./src/pages/InvoicePage";
+import RegisterPage from "./src/pages/RegisterPage";
 
 AuthAPI.setup()
 
@@ -29,8 +31,11 @@ const App = () => {
                 <NavbarWithRouter />
                 <main className="container pt-5">
                     <Switch>
+                        <Route excat path="/register" component={RegisterPage}/>
                         <Route excat path="/login" component={LoginPage}/>
+                        <PrivateRoute path="/invoices/:id" component={InvoicePage}/>
                         <PrivateRoute path="/invoices" component={InvoicesPage}/>
+                        <PrivateRoute path="/customers/:id" component={CustomerPage}/>
                         <PrivateRoute path="/customers" component={CustomersPage}/>
                         <Route excat path="/" component={HomePage}/>
                     </Switch>

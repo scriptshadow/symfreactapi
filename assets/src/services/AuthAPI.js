@@ -1,6 +1,11 @@
 import axios from "axios";
 import jwt from "jwt-decode";
 
+function create(user) {
+    return axios.post("http://127.0.0.1:8000/api/users", user)
+        .then((res) => res.data)
+}
+
 /**
  * Deconnexion (suppression du token du localStorage et sur Axios)
  */
@@ -64,6 +69,7 @@ function isAuthenticated() {
 }
 
 export default {
+    create,
     authenticate,
     logout,
     setup,

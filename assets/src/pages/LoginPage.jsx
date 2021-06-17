@@ -1,6 +1,8 @@
 import React, {useContext, useState} from 'react';
 import AuthAPI from "../services/AuthAPI";
 import AuthContext from "../contexts/AuthContext";
+import Field from "../components/forms/Field";
+import {Link} from "react-router-dom";
 
 const LoginPage = ({history}) =>{
     const [credentials, setCredentials] = useState({username: '', password: ''})
@@ -34,33 +36,26 @@ const LoginPage = ({history}) =>{
                     <div className="col-md-6 mx-auto">
                         <h1 className="text-center">Authentification</h1>
                         <form onSubmit={handleSubmit}>
-                            <div className={"form-group" + (error && " has-danger")}>
-                                <label className="form-label mt-4" htmlFor="username">Adresse email</label>
-                                <input type="email"
-                                       placeholder="Adresse email de connexion"
-                                       id="username"
-                                       name="username"
-                                       className={"form-control" + (error && " is-invalid")}
-                                       value={username}
-                                       onChange={handleChangeInput}
-                                />
-                                {error && <p className="invalid-feedback">{error}</p>}
-                            </div>
-                            <div className="form-group">
-                                <label className="form-label mt-4" htmlFor="password">Mot de passe</label>
-                                <input type="password"
-                                       placeholder="Mot de passe de connexion"
-                                       id="password"
-                                       name="password"
-                                       className="form-control"
-                                       value={password}
-                                       onChange={handleChangeInput}
-                                />
-                            </div>
+                            <Field type="email"
+                                   name="username"
+                                   label="Adresse email"
+                                   placeholder="Adresse email de connexion"
+                                   value={username}
+                                   onChange={handleChangeInput}
+                                   error={error}
+                            />
+                            <Field type="password"
+                                   name="password"
+                                   label="Mot de passe"
+                                   value={password}
+                                   onChange={handleChangeInput}
+                                   error={error}
+                            />
                             <div className="form-group mt-2">
                                 <button className="btn btn-success" type='submit'>S'identifier</button>
                             </div>
                         </form>
+                        <p>Vous n'avez pas de compte? <Link to="/register">S'inscrire</Link></p>
                     </div>
                 </div>
             </div>
